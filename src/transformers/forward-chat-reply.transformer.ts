@@ -14,7 +14,11 @@ export const cancelMenu = new Menu('cancel-menu').text('⛔️ Cancel', async (c
     return context.reply('Cannot merge message id 😢');
   }
 
-  return context.api.deleteMessage(environmentConfig.CHANNEL_ID, messageId);
+  await context.api.deleteMessage(environmentConfig.CHANNEL_ID, messageId);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  await context.editMessageText('Message has been deleted!', { reply_markup: undefined as any });
+
+  return null;
 });
 
 export const forwardChatReplyTransformer =
