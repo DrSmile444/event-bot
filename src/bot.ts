@@ -24,7 +24,9 @@ dotenv.config();
   activeComposer.use(forwardPinComposer);
 
   const notActiveRegisterComposer = new Composer();
-  const notActiveComposer = notActiveRegisterComposer.filter((context) => context.chat?.id !== +environmentConfig.CHAT_ID);
+  const notActiveComposer = notActiveRegisterComposer.filter(
+    (context) => context.chat?.id !== +environmentConfig.CHAT_ID && context.chat?.id !== +environmentConfig.CHANNEL_ID,
+  );
 
   notActiveComposer.use((context) => context.reply('You cant use this bot in this chat. Sorry'));
 
