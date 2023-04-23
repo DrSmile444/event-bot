@@ -12,6 +12,7 @@
   "dependencies": {
     "dotenv": "^16.0.1",
     "grammy": "^1.10.1",
+    "typegram": "^5.0.0",
     "ukrainian-ml-optimizer": "github:DrSmile444/ukrainian-ml-optimizer"
   },
   "devDependencies": {
