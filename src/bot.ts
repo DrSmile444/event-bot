@@ -4,12 +4,24 @@ import type { UserFromGetMe } from 'grammy/out/types';
 
 import { forwardCommandComposer, forwardPinComposer } from './composers';
 import { environmentConfig } from './config';
+import type { GrammyContext } from './context';
+import { selfDestructedReply } from './plugins';
+import { cancelMenu, forwardChatReplyTransformer } from './transformers';
 
 dotenv.config();
 
 (async () => {
   // Create an instance of the `Bot` class and pass your authentication token to it.
-  const bot = new Bot(environmentConfig.BOT_TOKEN); // <-- put your authentication token between the ""
+  const bot = new Bot<GrammyContext>(environmentConfig.BOT_TOKEN); // <
+
+  bot.use(cancelMenu);
+  bot.use(selfDestructedReply());
+  bot.use((context, next) => {
+    context.api.config.use(forwardChatReplyTransformer(context));
+    return next();
+  });
+
+  // -- put your authentication token between the ""
 
   // You can now register listeners on your bot object `bot`.
   // grammY will call the listeners when users send messages to your bot.
