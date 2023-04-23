@@ -1,24 +1,35 @@
-import * as process from 'node:process';
 import dotenv from 'dotenv';
-import { Bot } from 'grammy';
-import { UserFromGetMe } from 'grammy/out/types';
+import { Bot, Composer } from 'grammy';
+import type { UserFromGetMe } from 'grammy/out/types';
+
+import { forwardCommandComposer, forwardPinComposer } from './composers';
+import { environmentConfig } from './config';
 
 dotenv.config();
 
 (async () => {
   // Create an instance of the `Bot` class and pass your authentication token to it.
-  const bot = new Bot(process.env.BOT_TOKEN!); // <-- put your authentication token between the ""
+  const bot = new Bot(environmentConfig.BOT_TOKEN); // <-- put your authentication token between the ""
 
   // You can now register listeners on your bot object `bot`.
   // grammY will call the listeners when users send messages to your bot.
 
   // Handle the /start command.
-  bot.command('start', (context) => context.reply('Welcome! Up and running.'));
-  // Handle other messages.
-  bot.on('message', (context) => context.reply('Got another message!'));
+  bot.command('start', (context) => context.reply(`Welcome! Up and running. Chat id: ${context.chat?.id}`));
 
-  // Now that you specified how to handle messages, you can start your bot.
-  // This will connect to the Telegram servers and wait for messages.
+  const activeRegisterComposer = new Composer();
+  const activeComposer = activeRegisterComposer.filter((context) => context.chat?.id === +environmentConfig.CHAT_ID);
+
+  activeComposer.use(forwardCommandComposer);
+  activeComposer.use(forwardPinComposer);
+
+  const notActiveRegisterComposer = new Composer();
+  const notActiveComposer = notActiveRegisterComposer.filter((context) => context.chat?.id !== +environmentConfig.CHAT_ID);
+
+  notActiveComposer.use((context) => context.reply('You cant use this bot in this chat. Sorry'));
+
+  bot.use(activeRegisterComposer);
+  bot.use(notActiveRegisterComposer);
 
   // Start the bot.
   await bot.start({
