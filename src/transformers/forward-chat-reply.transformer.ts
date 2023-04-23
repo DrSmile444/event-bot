@@ -12,7 +12,7 @@ export const forwardChatReplyTransformer =
       const isChannelChatMessage = +chatId === +environmentConfig.CHANNEL_ID;
 
       if (isChannelChatMessage) {
-        await context.replyWithSelfDestructed('Sent message. Cancel?');
+        await context.replyWithSelfDestructed('Sent message. Cancel?', { reply_to_message_id: context.msg?.message_id || 0 });
       }
     }
 
