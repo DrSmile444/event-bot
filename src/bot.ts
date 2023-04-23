@@ -6,7 +6,7 @@ import { forwardCommandComposer, forwardPinComposer } from './composers';
 import { environmentConfig } from './config';
 import type { GrammyContext } from './context';
 import { selfDestructedReply } from './plugins';
-import { forwardChatReplyTransformer } from './transformers';
+import { cancelMenu, forwardChatReplyTransformer } from './transformers';
 
 dotenv.config();
 
@@ -14,6 +14,7 @@ dotenv.config();
   // Create an instance of the `Bot` class and pass your authentication token to it.
   const bot = new Bot<GrammyContext>(environmentConfig.BOT_TOKEN); // <
 
+  bot.use(cancelMenu);
   bot.use(selfDestructedReply());
   bot.use((context, next) => {
     context.api.config.use(forwardChatReplyTransformer(context));
