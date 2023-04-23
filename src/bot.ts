@@ -5,7 +5,7 @@ import { UserFromGetMe } from 'grammy/out/types';
 
 dotenv.config();
 
-await (async () => {
+(async () => {
   // Create an instance of the `Bot` class and pass your authentication token to it.
   const bot = new Bot(process.env.BOT_TOKEN!); // <-- put your authentication token between the ""
 
@@ -29,4 +29,6 @@ await (async () => {
       console.info(`Bot @${botInfo.username} started!`, new Date().toString());
     },
   });
-})();
+})().catch((error) => {
+  console.error('Bot cannot start due to:', error);
+});
