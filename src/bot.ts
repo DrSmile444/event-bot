@@ -5,14 +5,14 @@ import type { UserFromGetMe } from 'grammy/out/types';
 import { forwardCommandComposer, forwardPinComposer } from './composers';
 import { environmentConfig } from './config';
 import type { GrammyContext } from './context';
+import { noAccessMessage, startMessage } from './messages';
 import { selfDestructedReply } from './plugins';
 import { cancelMenu, forwardChatReplyTransformer } from './transformers';
 
 dotenv.config();
 
 (async () => {
-  // Create an instance of the `Bot` class and pass your authentication token to it.
-  const bot = new Bot<GrammyContext>(environmentConfig.BOT_TOKEN); // <
+  const bot = new Bot<GrammyContext>(environmentConfig.BOT_TOKEN);
 
   bot.use(cancelMenu);
   bot.use(selfDestructedReply());
@@ -21,13 +21,7 @@ dotenv.config();
     return next();
   });
 
-  // -- put your authentication token between the ""
-
-  // You can now register listeners on your bot object `bot`.
-  // grammY will call the listeners when users send messages to your bot.
-
-  // Handle the /start command.
-  bot.command('start', (context) => context.reply(`Welcome! Up and running. Chat id: ${context.chat?.id}`));
+  bot.command('start', (context) => context.reply(startMessage, { parse_mode: 'HTML' }));
 
   const activeRegisterComposer = new Composer();
   const activeComposer = activeRegisterComposer.filter((context) => context.chat?.id === +environmentConfig.CHAT_ID);
@@ -40,12 +34,11 @@ dotenv.config();
     (context) => context.chat?.id !== +environmentConfig.CHAT_ID && context.chat?.id !== +environmentConfig.CHANNEL_ID,
   );
 
-  notActiveComposer.use((context) => context.reply('You cant use this bot in this chat. Sorry'));
+  notActiveComposer.use((context) => context.reply(noAccessMessage, { parse_mode: 'HTML' }));
 
   bot.use(activeRegisterComposer);
   bot.use(notActiveRegisterComposer);
 
-  // Start the bot.
   await bot.start({
     onStart: () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
