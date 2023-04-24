@@ -1,25 +1,35 @@
 import { Menu } from '@grammyjs/menu';
 import type { RawApi, Transformer } from 'grammy';
 import type { Payload } from 'grammy/out/core/client';
+import type { MessageEntity } from 'typegram/message';
 
 import { environmentConfig } from '../config';
+import { userChannelId } from '../const';
 import type { GrammyContext } from '../context';
+import { approveMessage, cancelAutoForwardedMessage, getAutoForwardedMessage, rejectMessage } from '../messages';
 
-export const cancelMenu = new Menu('cancel-menu').text('⛔️ Cancel', async (context) => {
-  const messageRegex = /ID:(\d+)/g;
-  const messageIdMatch = messageRegex.exec(context.msg?.text || '') || [];
-  const messageId = +(messageIdMatch[1] || 0);
+export const cancelMenu = new Menu('cancel-menu')
+  .text(approveMessage, (context) => context.deleteMessage())
+  .text(rejectMessage, async (context) => {
+    const urlRegex = new RegExp(`https://t.me/c/${userChannelId}/(\\d+)`);
+    const urlEntity = context.msg?.entities?.find((entity) => entity.type === 'text_link' && urlRegex.test(entity.url)) as
+      | MessageEntity.TextLinkMessageEntity
+      | undefined;
 
-  if (!messageId) {
-    return context.reply('Cannot merge message id 😢');
-  }
+    if (!urlEntity) {
+      return context.reply('Cannot merge message id 😢');
+    }
 
-  await context.api.deleteMessage(environmentConfig.CHANNEL_ID, messageId);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  await context.editMessageText('Message has been deleted!', { reply_markup: undefined as any });
+    const { url } = urlEntity;
+    const messageIdMatch = urlRegex.exec(url) || [];
+    const messageId = +(messageIdMatch[1] || 0);
 
-  return null;
-});
+    await context.api.deleteMessage(environmentConfig.CHANNEL_ID, messageId);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    await context.editMessageText(cancelAutoForwardedMessage, { reply_markup: undefined as any });
+
+    return null;
+  });
 
 export const forwardChatReplyTransformer =
   (context: GrammyContext): Transformer =>
@@ -32,11 +42,12 @@ export const forwardChatReplyTransformer =
 
       if (isChannelChatMessage) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const result = (response as any)?.result?.message_id as number;
+        const messageId = (response as any)?.result?.message_id as number;
 
-        await context.replyWithSelfDestructed(`Sent message. ID:${result} Cancel?`, {
+        await context.replyWithSelfDestructed(getAutoForwardedMessage(messageId), {
           reply_to_message_id: context.msg?.message_id || 0,
           reply_markup: cancelMenu,
+          parse_mode: 'HTML',
         });
       }
     }
