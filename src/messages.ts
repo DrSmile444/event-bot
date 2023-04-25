@@ -4,16 +4,26 @@ import { userChannelId } from './const';
 /**
  * Command messages
  * */
-export const startMessage = `
+export const startAtomMessage = `
 <b>Привіт, я ВолікЧеБот 🇺🇦🏐!</b>
 
 Я допомагаю Черкаському чату "Волік" робити автоматичні анонси про події де ми збираємось і коли.
+`.trim();
+
+export const startMessage = `
+${startAtomMessage}
 
 Приєднуйся до нас ❤️
 ${environmentConfig.CHANNEL_URL}
 `.trim();
 
 export const noAccessMessage = '😝 Бот працює тільки в чаті та каналі <b>Воліка</b>, вибачте';
+
+export const forbiddenInviteMessage = `
+${startAtomMessage}
+
+${noAccessMessage}
+`;
 
 /**
  * Auto-forward messages

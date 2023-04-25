@@ -5,9 +5,11 @@ import type { UserFromGetMe } from 'grammy/out/types';
 import { forwardCommandComposer, forwardPinComposer } from './composers';
 import { environmentConfig } from './config';
 import type { GrammyContext } from './context';
-import { noAccessMessage, startMessage } from './messages';
+import { forbiddenInviteMessage, startMessage } from './messages';
 import { selfDestructedReply } from './plugins';
+import { botInviteQuery } from './queries';
 import { cancelMenu, forwardChatReplyTransformer } from './transformers';
+import { globalErrorHandler } from './utils';
 
 dotenv.config();
 
@@ -23,21 +25,24 @@ dotenv.config();
 
   bot.command('start', (context) => context.reply(startMessage, { parse_mode: 'HTML' }));
 
-  const activeRegisterComposer = new Composer();
+  const activeRegisterComposer = new Composer<GrammyContext>();
   const activeComposer = activeRegisterComposer.filter((context) => context.chat?.id === +environmentConfig.CHAT_ID);
 
+  activeComposer.on('my_chat_member', botInviteQuery(startMessage));
   activeComposer.use(forwardCommandComposer);
   activeComposer.use(forwardPinComposer);
 
-  const notActiveRegisterComposer = new Composer();
+  const notActiveRegisterComposer = new Composer<GrammyContext>();
   const notActiveComposer = notActiveRegisterComposer.filter(
     (context) => context.chat?.id !== +environmentConfig.CHAT_ID && context.chat?.id !== +environmentConfig.CHANNEL_ID,
   );
 
-  notActiveComposer.use((context) => context.reply(noAccessMessage, { parse_mode: 'HTML' }));
+  notActiveComposer.on('my_chat_member', botInviteQuery(forbiddenInviteMessage));
 
   bot.use(activeRegisterComposer);
   bot.use(notActiveRegisterComposer);
+
+  bot.catch(globalErrorHandler);
 
   await bot.start({
     onStart: () => {
