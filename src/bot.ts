@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import { Bot, Composer } from 'grammy';
 import type { UserFromGetMe } from 'grammy/out/types';
 
+import { runBotExpressServer } from './bot.server';
 import { commandSetter } from './command-setter';
 import { forwardCommandComposer, forwardPinComposer } from './composers';
 import { environmentConfig } from './config';
@@ -15,6 +16,8 @@ import { globalErrorHandler } from './utils';
 dotenv.config();
 
 (async () => {
+  runBotExpressServer();
+
   const bot = new Bot<GrammyContext>(environmentConfig.BOT_TOKEN);
 
   await commandSetter(bot);
