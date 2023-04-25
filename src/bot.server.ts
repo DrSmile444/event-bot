@@ -2,8 +2,6 @@ import express from 'express';
 
 import { environmentConfig } from './config';
 
-const port = 3000;
-
 export const runBotExpressServer = () => {
   const app = express();
 
