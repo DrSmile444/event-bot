@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import { Bot, Composer } from 'grammy';
 import type { UserFromGetMe } from 'grammy/out/types';
 
+import { commandSetter } from './command-setter';
 import { forwardCommandComposer, forwardPinComposer } from './composers';
 import { environmentConfig } from './config';
 import type { GrammyContext } from './context';
@@ -15,6 +16,8 @@ dotenv.config();
 
 (async () => {
   const bot = new Bot<GrammyContext>(environmentConfig.BOT_TOKEN);
+
+  await commandSetter(bot);
 
   bot.use(cancelMenu);
   bot.use(selfDestructedReply());
