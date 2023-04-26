@@ -2,17 +2,25 @@ import dotenv from 'dotenv';
 import { Bot, Composer } from 'grammy';
 import type { UserFromGetMe } from 'grammy/out/types';
 
+import { runBotExpressServer } from './bot.server';
+import { commandSetter } from './command-setter';
 import { forwardCommandComposer, forwardPinComposer } from './composers';
 import { environmentConfig } from './config';
 import type { GrammyContext } from './context';
+import { forbiddenInviteMessage, startMessage } from './messages';
 import { selfDestructedReply } from './plugins';
+import { botInviteQuery } from './queries';
 import { cancelMenu, forwardChatReplyTransformer } from './transformers';
+import { globalErrorHandler } from './utils';
 
 dotenv.config();
 
 (async () => {
-  // Create an instance of the `Bot` class and pass your authentication token to it.
-  const bot = new Bot<GrammyContext>(environmentConfig.BOT_TOKEN); // <
+  runBotExpressServer();
+
+  const bot = new Bot<GrammyContext>(environmentConfig.BOT_TOKEN);
+
+  await commandSetter(bot);
 
   bot.use(cancelMenu);
   bot.use(selfDestructedReply());
@@ -21,31 +29,27 @@ dotenv.config();
     return next();
   });
 
-  // -- put your authentication token between the ""
+  bot.command('start', (context) => context.reply(startMessage, { parse_mode: 'HTML' }));
 
-  // You can now register listeners on your bot object `bot`.
-  // grammY will call the listeners when users send messages to your bot.
-
-  // Handle the /start command.
-  bot.command('start', (context) => context.reply(`Welcome! Up and running. Chat id: ${context.chat?.id}`));
-
-  const activeRegisterComposer = new Composer();
+  const activeRegisterComposer = new Composer<GrammyContext>();
   const activeComposer = activeRegisterComposer.filter((context) => context.chat?.id === +environmentConfig.CHAT_ID);
 
+  activeComposer.on('my_chat_member', botInviteQuery(startMessage));
   activeComposer.use(forwardCommandComposer);
   activeComposer.use(forwardPinComposer);
 
-  const notActiveRegisterComposer = new Composer();
+  const notActiveRegisterComposer = new Composer<GrammyContext>();
   const notActiveComposer = notActiveRegisterComposer.filter(
     (context) => context.chat?.id !== +environmentConfig.CHAT_ID && context.chat?.id !== +environmentConfig.CHANNEL_ID,
   );
 
-  notActiveComposer.use((context) => context.reply('You cant use this bot in this chat. Sorry'));
+  notActiveComposer.on('my_chat_member', botInviteQuery(forbiddenInviteMessage));
 
   bot.use(activeRegisterComposer);
   bot.use(notActiveRegisterComposer);
 
-  // Start the bot.
+  bot.catch(globalErrorHandler);
+
   await bot.start({
     onStart: () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

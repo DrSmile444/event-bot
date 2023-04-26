@@ -1,20 +1,24 @@
 {
-  "name": "tensorflow-ml-bot-example",
+  "name": "event-bot",
   "version": "1.0.0",
-  "description": "This repo contains an example of using tensorflow model together with Telegram Bots to analyze messages from users.",
-  "main": "src/bot.js",
+  "description": "Event bot",
+  "main": "src/bot.ts",
   "scripts": {
     "start": "nodemon ./src/bot.ts",
+    "start:production": "ts-node ./src/bot.ts",
     "lint:js": "TIMING=1 eslint ./src --cache --ext ts,js --quiet",
     "lint:js:fix": "npm run lint:js -- --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "@grammyjs/menu": "^1.2.0",
+    "@types/express": "^4.17.17",
     "dotenv": "^16.0.1",
+    "express": "^4.18.2",
     "grammy": "^1.10.1",
+    "ts-node": "^10.9.1",
     "typegram": "^5.0.0",
-    "ukrainian-ml-optimizer": "github:DrSmile444/ukrainian-ml-optimizer"
+    "typescript": "^4.8.2"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.35.1",
@@ -26,9 +30,7 @@
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "eslint-plugin-unicorn": "^43.0.2",
     "nodemon": "^2.0.19",
-    "prettier": "^2.7.1",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.8.2"
+    "prettier": "^2.7.1"
   },
   "engines": {
     "node": ">=16.0.0"

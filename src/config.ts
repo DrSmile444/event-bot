@@ -5,6 +5,8 @@ export interface EnvironmentConfig {
   BOT_TOKEN: string;
   CHAT_ID: string;
   CHANNEL_ID: string;
+  CHANNEL_URL: string;
+  PORT: string;
 }
 
 dotenv.config();
