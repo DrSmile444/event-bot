@@ -8,4 +8,8 @@ export const commandSetter = (bot: Bot<GrammyContext>) =>
       command: '/start',
       description: '🏐 Почати роботу',
     },
+    {
+      command: '/forward',
+      description: 'Переслати повідомлення',
+    },
   ]);
