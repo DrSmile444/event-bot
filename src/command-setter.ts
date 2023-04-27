@@ -10,6 +10,6 @@ export const commandSetter = (bot: Bot<GrammyContext>) =>
     },
     {
       command: '/forward',
-      description: 'Переслати повідомлення',
+      description: '📤 Переслати повідомлення',
     },
   ]);

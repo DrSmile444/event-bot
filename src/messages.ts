@@ -37,5 +37,9 @@ export const getAutoForwardedMessage = (messageId: number) =>
 
 export const approveMessage = '👌 Норм';
 export const rejectMessage = '⛔️ Видали';
+export const unCorrectUseForwardCommand = `
+❌ Ви не виділили повідомлення.
+Для цього, вам потрібно вибрати повідомлення, яке ви б хотіли переслати та вибрати команду /forward
+`.trim();
 
 export const cancelAutoForwardedMessage = '🫡 Зрозумів-зрозумів. Видалив.';
