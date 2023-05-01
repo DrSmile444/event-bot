@@ -39,3 +39,5 @@ export const approveMessage = '👌 Норм';
 export const rejectMessage = '⛔️ Видали';
 
 export const cancelAutoForwardedMessage = '🫡 Зрозумів-зрозумів. Видалив.';
+
+export const ignoredOldMessage = '😢 Я тільки прокинувся і вже занадто пізно пересилати це повідомлення. Тому не буду це вже робити';
