@@ -1,11 +1,13 @@
 import { Composer } from 'grammy';
 
 import { environmentConfig } from '../config';
-import { unCorrectUseForwardCommand } from '../messages';
+import type { GrammyContext } from '../context';
+import { ignoredOldMessage, unCorrectUseForwardCommand } from '../messages';
+import { ignoreOld } from '../middlewares';
 
-export const forwardCommandComposer = new Composer();
+export const forwardCommandComposer = new Composer<GrammyContext>();
 
-forwardCommandComposer.command('forward', async (context) => {
+forwardCommandComposer.command('forward', ignoreOld(ignoredOldMessage), async (context) => {
   if (context.msg?.reply_to_message) {
     return context.api.forwardMessage(
       environmentConfig.CHANNEL_ID,
