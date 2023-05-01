@@ -12,9 +12,7 @@ import type { GrammyContext } from './context';
 
   await setupBot(bot);
 
-  console.log(environmentConfig.BOT_TYPE);
-
-  if (environmentConfig.BOT_TYPE === 'long-polling' || environmentConfig.BOT_TYPE === '') {
+  if (environmentConfig.BOT_TYPE === 'long-polling' || !environmentConfig.BOT_TYPE) {
     await bot.start({
       onStart: () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
