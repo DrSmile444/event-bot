@@ -8,11 +8,12 @@ import type { GrammyContext } from './context';
 
 (async () => {
   const bot = new Bot<GrammyContext>(environmentConfig.BOT_TOKEN);
-  const expressApp = runBotExpressServer();
+  const { expressApp, runExpressApp } = runBotExpressServer();
 
   await setupBot(bot);
 
   if (environmentConfig.BOT_TYPE === 'long-polling' || !environmentConfig.BOT_TYPE) {
+    runExpressApp();
     await bot.start({
       onStart: () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -23,12 +24,10 @@ import type { GrammyContext } from './context';
     });
   } else {
     expressApp.use(webhookCallback(bot, 'express'));
+    runExpressApp();
+
     console.info(`Bot ??? started on webhooks!`, new Date().toString());
   }
-
-  expressApp.listen(environmentConfig.PORT, () => {
-    console.info(`Bot-server started on http://localhost:${environmentConfig.PORT}`);
-  });
 })().catch((error) => {
   console.error('Bot cannot start due to:', error);
 });
