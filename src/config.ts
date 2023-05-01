@@ -7,6 +7,7 @@ export interface EnvironmentConfig {
   CHANNEL_ID: string;
   CHANNEL_URL: string;
   PORT: string;
+  BOT_TYPE: 'long-polling' | 'webhooks' | '';
 }
 
 dotenv.config();
