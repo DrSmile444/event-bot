@@ -1,8 +1,7 @@
 import dotenv from 'dotenv';
-import { Bot, Composer } from 'grammy';
-import type { UserFromGetMe } from 'grammy/out/types';
+import type { Bot } from 'grammy';
+import { Composer } from 'grammy';
 
-import { runBotExpressServer } from './bot.server';
 import { commandSetter } from './command-setter';
 import { forwardCommandComposer, forwardPinComposer } from './composers';
 import { environmentConfig } from './config';
@@ -15,11 +14,7 @@ import { globalErrorHandler } from './utils';
 
 dotenv.config();
 
-(async () => {
-  runBotExpressServer();
-
-  const bot = new Bot<GrammyContext>(environmentConfig.BOT_TOKEN);
-
+export const setupBot = async (bot: Bot<GrammyContext>) => {
   await commandSetter(bot);
 
   bot.use(cancelMenu);
@@ -30,6 +25,9 @@ dotenv.config();
   });
 
   bot.command('start', (context) => context.reply(startMessage, { parse_mode: 'HTML' }));
+  bot.command('debug', (context) =>
+    context.reply(`ChatID: <code>${context.chat.id}</code><br>MessageId: <code>${context.msg?.message_id}</code>`, { parse_mode: 'HTML' }),
+  );
 
   const activeRegisterComposer = new Composer<GrammyContext>();
   const activeComposer = activeRegisterComposer.filter((context) => context.chat?.id === +environmentConfig.CHAT_ID);
@@ -49,15 +47,4 @@ dotenv.config();
   bot.use(notActiveRegisterComposer);
 
   bot.catch(globalErrorHandler);
-
-  await bot.start({
-    onStart: () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const botInfo = bot.me as UserFromGetMe;
-      console.info(`Bot @${botInfo.username} started!`, new Date().toString());
-    },
-  });
-})().catch((error) => {
-  console.error('Bot cannot start due to:', error);
-});
+};
