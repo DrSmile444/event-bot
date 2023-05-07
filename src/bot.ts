@@ -27,7 +27,7 @@ export const setupBot = async (bot: Bot<GrammyContext>) => {
 
   bot.command('start', (context) => context.reply(startMessage, { parse_mode: 'HTML' }));
   bot.command('debug', (context) =>
-    context.reply(`ChatID: <code>${context.chat.id}</code><br>MessageId: <code>${context.msg?.message_id}</code>`, { parse_mode: 'HTML' }),
+    context.reply(`ChatID: <code>${context.chat.id}</code>\nMessageId: <code>${context.msg?.message_id}</code>`, { parse_mode: 'HTML' }),
   );
 
   const activeRegisterComposer = new Composer<GrammyContext>();
