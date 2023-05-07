@@ -15,5 +15,6 @@ forwardCommandComposer.command('forward', ignoreOld(ignoredOldMessage), async (c
       context.msg.reply_to_message?.message_id || 0,
     );
   }
-  return context.reply(unCorrectUseForwardCommand);
+
+  return context.reply(unCorrectUseForwardCommand, { parse_mode: 'HTML', reply_to_message_id: context.msg.message_id || 0 });
 });
