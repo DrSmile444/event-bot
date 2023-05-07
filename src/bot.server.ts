@@ -13,6 +13,8 @@ export const runBotExpressServer = (bot: Bot<GrammyContext>) => {
 
   app.use(express.json());
 
+  app.get('/', (_request, response) => response.json({ status: 'alive' }));
+
   app.get('/health-check', (_request, response) => response.json({ status: 'ok' }));
 
   const setBotWebhooks = () => {
