@@ -1,4 +1,5 @@
 import { Menu } from '@grammyjs/menu';
+import type { ApiResponse } from '@grammyjs/types/api';
 import type { RawApi, Transformer } from 'grammy';
 import type { Payload } from 'grammy/out/core/client';
 import type { MessageEntity } from 'typegram/message';
@@ -6,7 +7,7 @@ import type { MessageEntity } from 'typegram/message';
 import { environmentConfig } from '../config';
 import { userChannelId } from '../const';
 import type { GrammyContext } from '../context';
-import { approveMessage, cancelAutoForwardedMessage, getAutoForwardedMessage, rejectMessage } from '../messages';
+import { approveMessage, cancelAutoForwardedMessage, cannotPinMessage, getAutoForwardedMessage, rejectMessage } from '../messages';
 
 export const cancelMenu = new Menu('cancel-menu')
   .text(approveMessage, (context) => context.deleteMessage())
@@ -37,18 +38,33 @@ export const forwardChatReplyTransformer =
     const response = await previous(method, payload, signal);
 
     if (method === 'forwardMessage') {
-      const chatId = payload && typeof payload === 'object' && (payload as Payload<'forwardMessage', RawApi>).chat_id;
+      const forwardPayload = payload && typeof payload === 'object' && (payload as Payload<'forwardMessage', RawApi>);
+      const forwardResponse = response as unknown as ApiResponse<Awaited<ReturnType<RawApi['forwardMessage']>>>;
+
+      if (!forwardPayload || !forwardResponse || !forwardResponse.ok) {
+        return response;
+      }
+
+      const chatId = forwardPayload.chat_id;
       const isChannelChatMessage = +chatId === +environmentConfig.CHANNEL_ID;
 
       if (isChannelChatMessage) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const messageId = (response as any)?.result?.message_id as number;
+        const messageId = forwardResponse.result.message_id;
 
         await context.replyWithSelfDestructed(getAutoForwardedMessage(messageId), {
           reply_to_message_id: context.msg?.message_id || 0,
           reply_markup: cancelMenu,
           parse_mode: 'HTML',
         });
+
+        /**
+         * Pin the polls in channel chat
+         * */
+        if (forwardResponse.result.poll) {
+          await context.api.pinChatMessage(chatId, messageId).catch(async () => {
+            await context.reply(cannotPinMessage);
+          });
+        }
       }
     }
 
