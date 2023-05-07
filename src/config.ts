@@ -1,7 +1,7 @@
 import process from 'node:process';
 import dotenv from 'dotenv';
 
-export interface EnvironmentConfig {
+export interface BotEnvironmentConfig {
   BOT_TOKEN: string;
   CHAT_ID: string;
   CHANNEL_ID: string;
@@ -9,6 +9,13 @@ export interface EnvironmentConfig {
   PORT: string;
   BOT_TYPE?: 'long-polling' | 'webhooks' | '';
 }
+
+export interface RenderEnvironmentConfig {
+  RENDER: boolean;
+  RENDER_EXTERNAL_URL: string;
+}
+
+export type EnvironmentConfig = BotEnvironmentConfig & Partial<RenderEnvironmentConfig>;
 
 dotenv.config();
 

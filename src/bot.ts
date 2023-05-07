@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import type { Bot } from 'grammy';
 import { Composer } from 'grammy';
+import type { UserFromGetMe } from 'grammy/out/types';
 
 import { commandSetter } from './command-setter';
 import { forwardCommandComposer, forwardPinComposer } from './composers';
@@ -47,4 +48,17 @@ export const setupBot = async (bot: Bot<GrammyContext>) => {
   bot.use(notActiveRegisterComposer);
 
   bot.catch(globalErrorHandler);
+
+  const runLongPooling = async () => {
+    await bot.start({
+      onStart: () => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const botInfo = bot.me as UserFromGetMe;
+        console.info(`Bot @${botInfo.username} started on long-polling!`, new Date().toString());
+      },
+    });
+  };
+
+  return { runLongPooling };
 };
