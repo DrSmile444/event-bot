@@ -1,16 +1,14 @@
 import dotenv from 'dotenv';
 import type { Bot } from 'grammy';
-import { Composer } from 'grammy';
 import type { UserFromGetMe } from 'grammy/out/types';
 
+import { activeRegisterComposer } from './composers/active.composer';
+import { notActiveRegisterComposer } from './composers/not-active.composer';
 import { commandSetter } from './command-setter';
-import { dailyPollComposer, forwardCommandComposer, forwardPinComposer } from './composers';
-import { environmentConfig } from './config';
 import type { GrammyContext } from './context';
-import { forbiddenInviteMessage, startMessage } from './messages';
-import { leaveNotRelevantMiddleware, webhookOptimizationMiddleware } from './middlewares';
+import { startMessage } from './messages';
+import { webhookOptimizationMiddleware } from './middlewares';
 import { selfDestructedReply } from './plugins';
-import { botInviteQuery } from './queries';
 import { cancelMenu, forwardChatReplyTransformer } from './transformers';
 import { globalErrorHandler } from './utils';
 
@@ -31,21 +29,6 @@ export const setupBot = async (bot: Bot<GrammyContext>) => {
   bot.command('debug', (context) =>
     context.reply(`ChatID: <code>${context.chat.id}</code>\nMessageId: <code>${context.msg?.message_id}</code>`, { parse_mode: 'HTML' }),
   );
-
-  const activeRegisterComposer = new Composer<GrammyContext>();
-  const activeComposer = activeRegisterComposer.filter((context) => context.chat?.id === +environmentConfig.CHAT_ID);
-
-  activeComposer.on('my_chat_member', botInviteQuery(startMessage));
-  activeComposer.use(forwardCommandComposer);
-  activeComposer.use(forwardPinComposer);
-  activeComposer.use(dailyPollComposer);
-
-  const notActiveRegisterComposer = new Composer<GrammyContext>();
-  const notActiveComposer = notActiveRegisterComposer.filter(
-    (context) => context.chat?.id !== +environmentConfig.CHAT_ID && context.chat?.id !== +environmentConfig.CHANNEL_ID,
-  );
-
-  notActiveComposer.on('my_chat_member', botInviteQuery(forbiddenInviteMessage), leaveNotRelevantMiddleware);
 
   bot.use(activeRegisterComposer);
   bot.use(notActiveRegisterComposer);
