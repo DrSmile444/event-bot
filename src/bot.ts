@@ -1,4 +1,3 @@
-import dotenv from 'dotenv';
 import type { Bot } from 'grammy';
 import type { UserFromGetMe } from 'grammy/out/types';
 
@@ -11,8 +10,6 @@ import { webhookOptimizationMiddleware } from './middlewares';
 import { selfDestructedReply } from './plugins';
 import { cancelMenu, forwardChatReplyTransformer } from './transformers';
 import { globalErrorHandler } from './utils';
-
-dotenv.config();
 
 export const setupBot = async (bot: Bot<GrammyContext>) => {
   await commandSetter(bot);
