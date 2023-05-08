@@ -8,7 +8,7 @@ import { dailyPollComposer, forwardCommandComposer, forwardPinComposer } from '.
 import { environmentConfig } from './config';
 import type { GrammyContext } from './context';
 import { forbiddenInviteMessage, startMessage } from './messages';
-import { webhookOptimizationMiddleware } from './middlewares';
+import { leaveNotRelevantMiddleware, webhookOptimizationMiddleware } from './middlewares';
 import { selfDestructedReply } from './plugins';
 import { botInviteQuery } from './queries';
 import { cancelMenu, forwardChatReplyTransformer } from './transformers';
@@ -45,7 +45,7 @@ export const setupBot = async (bot: Bot<GrammyContext>) => {
     (context) => context.chat?.id !== +environmentConfig.CHAT_ID && context.chat?.id !== +environmentConfig.CHANNEL_ID,
   );
 
-  notActiveComposer.on('my_chat_member', botInviteQuery(forbiddenInviteMessage));
+  notActiveComposer.on('my_chat_member', botInviteQuery(forbiddenInviteMessage), leaveNotRelevantMiddleware);
 
   bot.use(activeRegisterComposer);
   bot.use(notActiveRegisterComposer);
