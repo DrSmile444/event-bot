@@ -9,6 +9,10 @@ export const commandSetter = (bot: Bot<GrammyContext>) =>
       description: '🏐 Почати роботу',
     },
     {
+      command: '/poll',
+      description: '📊 Створити голосування',
+    },
+    {
       command: '/forward',
       description: '📤 Переслати повідомлення',
     },
