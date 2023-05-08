@@ -11,6 +11,7 @@ dailyPollComposer.command('poll', async (context, next) => {
 
   const pollMessage = await context.replyWithPoll(getPollQuestionMessage(date), getPollOptionMessages(), {
     allows_multiple_answers: true,
+    is_anonymous: false,
   });
 
   await context.api.forwardMessage(environmentConfig.CHANNEL_ID, pollMessage.chat.id, pollMessage.message_id);
