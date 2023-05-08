@@ -8,6 +8,7 @@ import { forwardCommandComposer, forwardPinComposer } from './composers';
 import { environmentConfig } from './config';
 import type { GrammyContext } from './context';
 import { forbiddenInviteMessage, startMessage } from './messages';
+import { webhookOptimizationMiddleware } from './middlewares';
 import { selfDestructedReply } from './plugins';
 import { botInviteQuery } from './queries';
 import { cancelMenu, forwardChatReplyTransformer } from './transformers';
@@ -20,6 +21,7 @@ export const setupBot = async (bot: Bot<GrammyContext>) => {
 
   bot.use(cancelMenu);
   bot.use(selfDestructedReply());
+  bot.use(webhookOptimizationMiddleware);
   bot.use((context, next) => {
     context.api.config.use(forwardChatReplyTransformer(context));
     return next();
