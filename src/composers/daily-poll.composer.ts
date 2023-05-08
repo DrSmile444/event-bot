@@ -2,12 +2,14 @@ import { Composer } from 'grammy';
 
 import { environmentConfig } from '../config';
 import type { GrammyContext } from '../context';
-import { pollOptionMessages, pollQuestionMessage } from '../messages';
+import { getPollOptionMessages, getPollQuestionMessage } from '../messages';
 
 export const dailyPollComposer = new Composer<GrammyContext>();
 
 dailyPollComposer.command('poll', async (context, next) => {
-  const pollMessage = await context.replyWithPoll(pollQuestionMessage, pollOptionMessages, {
+  const date = new Date().toLocaleString('uk-UA', { day: 'numeric', month: 'long', weekday: 'long' });
+
+  const pollMessage = await context.replyWithPoll(getPollQuestionMessage(date), getPollOptionMessages(), {
     allows_multiple_answers: true,
   });
 
