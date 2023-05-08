@@ -4,7 +4,7 @@ import { Composer } from 'grammy';
 import type { UserFromGetMe } from 'grammy/out/types';
 
 import { commandSetter } from './command-setter';
-import { forwardCommandComposer, forwardPinComposer } from './composers';
+import { dailyPollComposer, forwardCommandComposer, forwardPinComposer } from './composers';
 import { environmentConfig } from './config';
 import type { GrammyContext } from './context';
 import { forbiddenInviteMessage, startMessage } from './messages';
@@ -38,6 +38,7 @@ export const setupBot = async (bot: Bot<GrammyContext>) => {
   activeComposer.on('my_chat_member', botInviteQuery(startMessage));
   activeComposer.use(forwardCommandComposer);
   activeComposer.use(forwardPinComposer);
+  activeComposer.use(dailyPollComposer);
 
   const notActiveRegisterComposer = new Composer<GrammyContext>();
   const notActiveComposer = notActiveRegisterComposer.filter(
