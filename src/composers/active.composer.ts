@@ -2,7 +2,8 @@ import { Composer } from 'grammy';
 
 import { environmentConfig } from '../config';
 import type { GrammyContext } from '../context';
-import { startMessage } from '../messages';
+import { ignoredOldMessage, startMessage } from '../messages';
+import { ignoreOld } from '../middlewares';
 import { botInviteQuery } from '../queries';
 
 import { dailyPollComposer } from './daily-poll.composer';
@@ -13,6 +14,8 @@ export const activeRegisterComposer = new Composer<GrammyContext>();
 const activeComposer = activeRegisterComposer.filter((context) => context.chat?.id === +environmentConfig.CHAT_ID);
 
 activeComposer.on('my_chat_member', botInviteQuery(startMessage));
+
+activeComposer.use(ignoreOld(ignoredOldMessage));
 activeComposer.use(forwardCommandComposer);
 activeComposer.use(forwardPinComposer);
 activeComposer.use(dailyPollComposer);
