@@ -2,6 +2,7 @@ import type { ErrorHandler } from 'grammy';
 import { GrammyError, HttpError } from 'grammy';
 
 import type { GrammyContext } from '../context';
+import { somethingWentWrongMessage } from '../messages';
 
 /**
  * Global error handler for the bot
@@ -19,4 +20,7 @@ export const globalErrorHandler: ErrorHandler<GrammyContext> = (botError) => {
   }
 
   console.error('*** GLOBAL-HANDLED ERROR CTX ***', ctx);
+  ctx.reply(somethingWentWrongMessage).catch(() => {
+    console.error('Cannot reply that something went wrong!');
+  });
 };

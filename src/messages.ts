@@ -92,3 +92,6 @@ export const getPollOptionMessages = () => [
   `Вагаюсь ${getRandomItem(pollDunnoEmojis)}`,
   `Не буду ${getRandomItem(pollSkipEmojis)}`,
 ];
+
+export const somethingWentWrongMessage = '😢 Щось пішло не так, у мене виникла помилка';
+export const cannotFindForwardedMessage = '🤯 Не можу знайти повідомлення, яке я переслав. Щось пішло не так.';
