@@ -15,6 +15,7 @@ dailyPollComposer.command('poll', ignoreOld(ignoredOldMessage), async (context, 
     is_anonymous: false,
   });
 
+  await context.api.pinChatMessage(context.chat.id, pollMessage.chat.id);
   await context.api.forwardMessage(environmentConfig.CHANNEL_ID, pollMessage.chat.id, pollMessage.message_id);
 
   return next();
