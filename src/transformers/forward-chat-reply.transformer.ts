@@ -7,7 +7,14 @@ import type { MessageEntity } from 'typegram/message';
 import { environmentConfig } from '../config';
 import { userChannelId } from '../const';
 import type { GrammyContext } from '../context';
-import { approveMessage, cancelAutoForwardedMessage, cannotPinMessage, getAutoForwardedMessage, rejectMessage } from '../messages';
+import {
+  approveMessage,
+  cancelAutoForwardedMessage,
+  cannotFindForwardedMessage,
+  cannotPinMessage,
+  getAutoForwardedMessage,
+  rejectMessage,
+} from '../messages';
 
 export const cancelMenu = new Menu('cancel-menu')
   .text(approveMessage, (context) => context.deleteMessage())
@@ -18,7 +25,7 @@ export const cancelMenu = new Menu('cancel-menu')
       | undefined;
 
     if (!urlEntity) {
-      return context.reply('Cannot merge message id 😢');
+      return context.reply('Cannot parse message id 😢');
     }
 
     const { url } = urlEntity;
@@ -51,11 +58,14 @@ export const forwardChatReplyTransformer =
       if (isChannelChatMessage) {
         const messageId = forwardResponse.result.message_id;
 
-        await context.replyWithSelfDestructed(getAutoForwardedMessage(messageId), {
-          reply_to_message_id: context.msg?.message_id || 0,
-          reply_markup: cancelMenu,
-          parse_mode: 'HTML',
-        });
+        await context
+          .replyWithSelfDestructed(getAutoForwardedMessage(messageId), {
+            reply_to_message_id: forwardPayload.message_id || 0,
+            reply_markup: cancelMenu,
+            parse_mode: 'HTML',
+            disable_web_page_preview: true,
+          })
+          .catch(() => context.reply(cannotFindForwardedMessage));
 
         /**
          * Pin the polls in channel chat
