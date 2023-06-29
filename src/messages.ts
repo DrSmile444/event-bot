@@ -106,3 +106,8 @@ export const getPollOptionMessages = () => [
 export const somethingWentWrongMessage = '😢 Щось пішло не так, у мене виникла помилка';
 export const cannotFindForwardedMessage = '🤯 Не можу знайти повідомлення, яке я переслав. Щось пішло не так.';
 export const cannotSendPollTodayAgainMessage = '✋ Я вже відправляв сьогодні голосувалку, тому чекайте завтра.';
+
+export const getBotStartMessage = (version: string) => `
+<b>🥳 Я оновився.</b>
+🏷️ Моя версія тепер <b>${version}</b>
+`;
