@@ -6,6 +6,7 @@ import type { UserFromGetMe } from 'grammy/out/types';
 import { activeRegisterComposer } from './composers/active.composer';
 import { notActiveRegisterComposer } from './composers/not-active.composer';
 import { commandSetter } from './command-setter';
+import { environmentConfig } from './config';
 import type { GrammyContext } from './context';
 import type { SessionData } from './interfaces';
 import { startMessage } from './messages';
@@ -17,12 +18,19 @@ import { globalErrorHandler } from './utils';
 export const setupBot = async (bot: Bot<GrammyContext>) => {
   await commandSetter(bot);
 
-  bot.use(
-    session({
-      initial: () => ({}),
-      storage: freeStorage<SessionData>(bot.token),
-    }),
-  );
+  if (environmentConfig.NODE_ENV === 'local') {
+    bot.use((context, next) => {
+      context.session = {};
+      return next();
+    });
+  } else {
+    bot.use(
+      session({
+        initial: () => ({}),
+        storage: freeStorage<SessionData>(bot.token),
+      }),
+    );
+  }
 
   bot.use(cancelMenu);
   bot.use(selfDestructedReply());
