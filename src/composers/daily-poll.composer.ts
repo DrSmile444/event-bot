@@ -3,11 +3,11 @@ import { Composer } from 'grammy';
 import { environmentConfig } from '../config';
 import type { GrammyContext } from '../context';
 import { getPollOptionMessages, getPollQuestionMessage, ignoredOldMessage } from '../messages';
-import { ignoreOld } from '../middlewares';
+import { ignoreOld, ignoreToday } from '../middlewares';
 
 export const dailyPollComposer = new Composer<GrammyContext>();
 
-dailyPollComposer.command('poll', ignoreOld(ignoredOldMessage), async (context, next) => {
+dailyPollComposer.command('poll', ignoreOld(ignoredOldMessage), ignoreToday, async (context, next) => {
   const date = new Date().toLocaleString('uk-UA', { day: 'numeric', month: 'long', weekday: 'long' });
 
   const pollMessage = await context.replyWithPoll(getPollQuestionMessage(date), getPollOptionMessages(), {
