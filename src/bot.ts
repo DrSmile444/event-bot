@@ -10,13 +10,13 @@ import { environmentConfig } from './config';
 import type { GrammyContext } from './context';
 import type { SessionData } from './interfaces';
 import { startMessage } from './messages';
-import { webhookOptimizationMiddleware } from './middlewares';
+import { confirmMenu, webhookOptimizationMiddleware } from './middlewares';
 import { selfDestructedReply } from './plugins';
 import { cancelMenu, forwardChatReplyTransformer } from './transformers';
 import { globalErrorHandler } from './utils';
 
-export const setupBot = async (bot: Bot<GrammyContext>) => {
-  await commandSetter(bot);
+export const setupBot = async (bot: Bot<GrammyContext>, version: string) => {
+  await commandSetter(bot, version);
 
   if (environmentConfig.NODE_ENV === 'local') {
     bot.use((context, next) => {
@@ -33,6 +33,7 @@ export const setupBot = async (bot: Bot<GrammyContext>) => {
   }
 
   bot.use(cancelMenu);
+  bot.use(confirmMenu);
   bot.use(selfDestructedReply());
   bot.use(webhookOptimizationMiddleware);
   bot.use((context, next) => {
@@ -41,6 +42,7 @@ export const setupBot = async (bot: Bot<GrammyContext>) => {
   });
 
   bot.command('start', (context) => context.reply(startMessage, { parse_mode: 'HTML' }));
+  bot.command('version', (context) => context.reply(version, { parse_mode: 'HTML' }));
   bot.command('debug', (context) =>
     context.reply(`ChatID: <code>${context.chat.id}</code>\nMessageId: <code>${context.msg?.message_id}</code>`, { parse_mode: 'HTML' }),
   );

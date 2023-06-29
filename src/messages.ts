@@ -36,6 +36,11 @@ export const getAutoForwardedMessage = (messageId: number) =>
 👉 <a href="https://t.me/c/${userChannelId}/${messageId}">Ось</a> повідомлення.
 `.trim();
 
+export const manualForwardMessage = `🤔 Переслати це в <a href="${environmentConfig.CHANNEL_URL}">Анонси</a>?`;
+
+export const forwardApproveMessage = '👌 Перешли';
+export const forwardRejectMessage = '⛔️ Не треба';
+
 export const approveMessage = '👌 Норм';
 export const rejectMessage = '⛔️ Видали';
 export const unCorrectUseForwardCommand = `
@@ -46,6 +51,8 @@ export const unCorrectUseForwardCommand = `
 
 export const cannotPinMessage = '😢 Я чомусь не можу закріпити повідомлення в каналі. Я або не адмін там, або не маю прав на закріплення.';
 
+export const confirmManualForwardMessage = '💅 Чудово, я переслав';
+export const rejectManualForwardMessage = '😉 Ок, це залишиться між нами';
 export const cancelAutoForwardedMessage = '🫡 Зрозумів-зрозумів. Видалив.';
 
 export const ignoredOldMessage = '😢 Я тільки прокинувся і вже занадто пізно пересилати це повідомлення. Тому не буду це вже робити';
