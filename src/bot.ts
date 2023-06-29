@@ -1,10 +1,13 @@
+import { freeStorage } from '@grammyjs/storage-free';
 import type { Bot } from 'grammy';
+import { session } from 'grammy';
 import type { UserFromGetMe } from 'grammy/out/types';
 
 import { activeRegisterComposer } from './composers/active.composer';
 import { notActiveRegisterComposer } from './composers/not-active.composer';
 import { commandSetter } from './command-setter';
 import type { GrammyContext } from './context';
+import type { SessionData } from './interfaces';
 import { startMessage } from './messages';
 import { webhookOptimizationMiddleware } from './middlewares';
 import { selfDestructedReply } from './plugins';
@@ -13,6 +16,13 @@ import { globalErrorHandler } from './utils';
 
 export const setupBot = async (bot: Bot<GrammyContext>) => {
   await commandSetter(bot);
+
+  bot.use(
+    session({
+      initial: () => ({}),
+      storage: freeStorage<SessionData>(bot.token),
+    }),
+  );
 
   bot.use(cancelMenu);
   bot.use(selfDestructedReply());
