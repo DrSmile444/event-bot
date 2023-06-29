@@ -11,7 +11,7 @@ import type { GrammyContext } from './context';
 (async () => {
   const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json')).toString()) as PackageJson;
   const bot = new Bot<GrammyContext>(environmentConfig.BOT_TOKEN);
-  const { runLongPooling } = await setupBot(bot, packageJson.version || 'unknown');
+  const { runLongPooling, logNewVersion } = await setupBot(bot, packageJson.version || 'unknown');
 
   const { runExpressApp, setBotWebhooks } = runBotExpressServer(bot);
 
@@ -21,6 +21,7 @@ import type { GrammyContext } from './context';
   } else {
     setBotWebhooks();
     runExpressApp();
+    await logNewVersion();
   }
 })().catch((error) => {
   console.error('Bot cannot start due to:', error);
