@@ -1,8 +1,9 @@
-import type { CommandContext, Context, Filter, FilterQuery, MiddlewareFn } from 'grammy';
+import type { CommandContext, Context, Filter, FilterQuery, MiddlewareFn, SessionFlavor } from 'grammy';
 
+import type { SessionData } from './interfaces';
 import type { SelfDestructedFlavor } from './plugins';
 
-export type GrammyContext = SelfDestructedFlavor<Context>;
+export type GrammyContext = SelfDestructedFlavor<Context> & SessionFlavor<SessionData>;
 
 export type GrammyMiddleware<C extends GrammyContext = GrammyContext> = MiddlewareFn<C>;
 export type GrammyCommandMiddleware = GrammyMiddleware<CommandContext<GrammyContext>>;
