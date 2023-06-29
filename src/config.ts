@@ -8,6 +8,7 @@ export interface BotEnvironmentConfig {
   CHANNEL_URL: string;
   PORT: string;
   BOT_TYPE?: 'long-polling' | 'webhooks' | '';
+  NODE_ENV?: 'local' | 'production';
 }
 
 export interface RenderEnvironmentConfig {

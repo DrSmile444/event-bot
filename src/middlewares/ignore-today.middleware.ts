@@ -24,7 +24,6 @@ function formatDate(date: Date) {
  */
 export const ignoreToday: GrammyMiddleware = (context, next) => {
   if (!context.session.lastPollDate) {
-    context.session.lastPollDate = new Date().toISOString();
     return next();
   }
 
