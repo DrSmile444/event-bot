@@ -10,6 +10,7 @@ export const dailyPollComposer = new Composer<GrammyContext>();
 dailyPollComposer.command('poll', ignoreOld(ignoredOldMessage), ignoreToday, async (context, next) => {
   const date = new Date().toLocaleString('uk-UA', { day: 'numeric', month: 'long', weekday: 'long' });
 
+  await context.deleteMessage();
   const pollMessage = await context.replyWithPoll(getPollQuestionMessage(date), getPollOptionMessages(), {
     allows_multiple_answers: true,
     is_anonymous: false,

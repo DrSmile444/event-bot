@@ -9,6 +9,7 @@ export const forwardCommandComposer = new Composer<GrammyContext>();
 
 forwardCommandComposer.command('forward', ignoreOld(ignoredOldMessage), async (context) => {
   if (context.msg?.reply_to_message) {
+    await context.deleteMessage();
     return context.api.forwardMessage(
       environmentConfig.CHANNEL_ID,
       environmentConfig.CHAT_ID,
