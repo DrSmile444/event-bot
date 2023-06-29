@@ -10,7 +10,7 @@ import { environmentConfig } from './config';
 import type { GrammyContext } from './context';
 import type { SessionData } from './interfaces';
 import { startMessage } from './messages';
-import { webhookOptimizationMiddleware } from './middlewares';
+import { confirmMenu, webhookOptimizationMiddleware } from './middlewares';
 import { selfDestructedReply } from './plugins';
 import { cancelMenu, forwardChatReplyTransformer } from './transformers';
 import { globalErrorHandler } from './utils';
@@ -33,6 +33,7 @@ export const setupBot = async (bot: Bot<GrammyContext>) => {
   }
 
   bot.use(cancelMenu);
+  bot.use(confirmMenu);
   bot.use(selfDestructedReply());
   bot.use(webhookOptimizationMiddleware);
   bot.use((context, next) => {
