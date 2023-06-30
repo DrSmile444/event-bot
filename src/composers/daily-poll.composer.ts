@@ -16,7 +16,7 @@ dailyPollComposer.command('poll', ignoreOld(ignoredOldMessage), ignoreToday, asy
     is_anonymous: false,
   });
 
-  await context.api.pinChatMessage(context.chat.id, pollMessage.message_id);
+  await context.api.pinChatMessage(context.chat.id, pollMessage.message_id, { disable_notification: true });
   await context.api.forwardMessage(environmentConfig.CHANNEL_ID, pollMessage.chat.id, pollMessage.message_id);
 
   context.session.lastPollDate = new Date().toISOString();
